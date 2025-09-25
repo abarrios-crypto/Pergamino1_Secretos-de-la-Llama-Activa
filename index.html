@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Chosen Palette: Ancient Scroll -->
+    <!-- Application Structure Plan: The SPA simulates a long, vertical parchment scroll to match the document's fantasy theme. The information architecture is thematic, mirroring the Grimorio's logical flow (Introduction, Universe, Game Design, Theory, Conclusion). A sticky "Mapa del Grimorio" (Table of Contents) at the top provides immediate, smooth-scroll access to any section, solving the navigation challenge of a long page. This structure was chosen because it enhances the narrative, making the user feel like they are exploring an ancient artifact, rather than just reading a document. Key interactions include hover effects on diagrams (Kolb's Cycle) and scroll-triggered animations to make the content feel dynamic and alive, improving user engagement and comprehension. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Kolb's Learning Cycle -> Goal: Organize/Inform -> Viz/Presentation: Interactive diagram built with HTML/CSS Flexbox -> Interaction: On hover, sections of the diagram scale up and related text is highlighted, encouraging exploration -> Justification: Visually represents the cyclical process more effectively than a static list and makes a theoretical concept interactive and easier to understand. -> Library/Method: Vanilla JS + Tailwind CSS.
+        - Report Info: Sensory Design (Sounds) -> Goal: Inform/Engage -> Viz/Presentation: Interactive HTML buttons for each sound type -> Interaction: On click, a sample sound is played using Tone.js -> Justification: Provides a direct, tangible demonstration of the concepts described in the text, making the learning multi-sensory and more memorable. -> Library/Method: Tone.js.
+        - Report Info: Entire document structure -> Goal: Engagement/Navigation -> Viz/Presentation: Sections that fade-in on scroll -> Interaction: Scrolling down the page triggers animations -> Justification: Turns passive reading into a dynamic experience of discovery, keeping the user engaged as they explore the "scroll". -> Library/Method: Vanilla JS (Intersection Observer API).
+        - Report Info: Document sections -> Goal: Navigation -> Viz/Presentation: A sticky top navigation bar styled as a map -> Interaction: Clicking a link smoothly scrolls to the relevant section -> Justification: Provides essential usability for a single-page application, allowing users to quickly jump between topics without losing context. -> Library/Method: Vanilla JS + HTML anchors.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <title>Grimorio del Guía: Secretos de la Llama Activa</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=IM+Fell+English+SC&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+    <style>
+        body {
+            background-color: #FDF6E3;
+            color: #583E23;
+            font-family: 'IM Fell English SC', serif;
+        }
+        .zelda-font {
+            font-family: 'Cinzel Decorative', cursive;
+        }
+        .parchment {
+            background-image: radial-gradient(ellipse at center, rgba(253, 246, 227, 1) 0%, rgba(225, 183, 138, 0.3) 100%);
+            box-shadow: 0 0 40px rgba(0,0,0,0.4);
+        }
+        .scroll-target {
+            scroll-margin-top: 100px; 
+        }
+        .fade-in-section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in-section.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .kolb-cycle-item:hover .kolb-icon {
+            transform: scale(1.2);
+            color: #A97142;
+        }
+         .kolb-cycle-item:hover .kolb-text {
+            color: #583E23;
+        }
+        .kolb-icon {
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+        .sound-btn:hover {
+            background-color: #A97142;
+            color: #FDF6E3;
+        }
+    </style>
+</head>
+<body class="bg-[#FDF6E3]">
+
+    <nav class="sticky top-0 z-50 bg-opacity-80 backdrop-blur-md bg-[#d8c7a8] border-b-2 border-[#A97142] shadow-lg">
+        <div class="max-w-5xl mx-auto px-4">
+            <div class="flex justify-between items-center py-2">
+                <h1 class="text-xl zelda-font text-[#583E23]">Mapa del Grimorio</h1>
+                <div class="hidden md:flex items-center space-x-4 text-sm">
+                    <a href="#universo" class="hover:text-[#A97142] transition-colors">Universo</a>
+                    <a href="#experiencia" class="hover:text-[#A97142] transition-colors">Juego</a>
+                    <a href="#teoria" class="hover:text-[#A97142] transition-colors">Teoría</a>
+                    <a href="#conclusion" class="hover:text-[#A97142] transition-colors">Conclusión</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-4xl mx-auto my-12 p-8 md:p-12 parchment border-x-4 border-[#D1B78A]">
+
+        <header class="text-center mb-16 fade-in-section">
+            <h1 class="text-4xl md:text-6xl zelda-font text-[#583E23] drop-shadow-sm">Grimorio del Guía</h1>
+            <h2 class="text-2xl md:text-3xl zelda-font text-[#A97142]">Secretos de la Llama Activa</h2>
+        </header>
+
+        <section class="mb-12 fade-in-section">
+            <h2 class="text-3xl zelda-font text-[#A97142] mb-4 border-b-2 border-[#D1B78A] pb-2">Introducción: La Forja de un Universo</h2>
+            <p class="text-lg leading-relaxed">Este documento es el mapa maestro, la crónica de la creación de un universo diseñado no solo para enseñar, sino para ser vivido. "Las Crónicas del Guía: El Sendero de la Llama Activa" nace de la convicción de que el aprendizaje más profundo es aquel que se convierte en una experiencia memorable, una leyenda personal. Aquí se detallan los pilares narrativos, los fundamentos pedagógicos y las decisiones de diseño que dan vida a esta aventura, sirviendo como una guía completa para comprender, implementar y expandir este cosmos educativo.</p>
+        </section>
+
+        <section id="universo" class="scroll-target mb-16 fade-in-section">
+            <h2 class="text-3xl zelda-font text-[#A97142] mb-6 border-b-2 border-[#D1B78A] pb-2">1. El Universo Narrativo: "Las Crónicas del Guía"</h2>
+            <p class="text-lg leading-relaxed mb-8">El corazón de toda experiencia inmersiva es una historia que resuene con el participante. Nuestro universo se construyó sobre una metáfora central: **el conocimiento como una "Llama Activa" que debe ser reavivada por "Guías" legendarios (los docentes).**</p>
+            <div class="grid md:grid-cols-3 gap-8 text-center">
+                <div class="border border-[#D1B78A] p-4 rounded-lg bg-[#fdf6e3]/50">
+                    <div class="text-4xl mb-2">⚡️</div>
+                    <h3 class="text-xl zelda-font text-[#583E23]">La Gran Fractura</h3>
+                    <p class="text-base">El conocimiento se ha vuelto pasivo y gris. Esto refleja el desafío pedagógico de la falta de motivación en la enseñanza tradicional.</p>
+                </div>
+                <div class="border border-[#D1B78A] p-4 rounded-lg bg-[#fdf6e3]/50">
+                    <div class="text-4xl mb-2">🌟</div>
+                    <h3 class="text-xl zelda-font text-[#583E23]">La Profecía del Guía</h3>
+                    <p class="text-base">Posiciona al participante como el protagonista de la historia, elevando su sentido de propósito y agencia.</p>
+                </div>
+                <div class="border border-[#D1B78A] p-4 rounded-lg bg-[#fdf6e3]/50">
+                    <div class="text-4xl mb-2">🗺️</div>
+                    <h3 class="text-xl zelda-font text-[#583E23]">El Sendero de la Llama</h3>
+                    <p class="text-base">El viaje no es un curso, es un "sendero". Este lenguaje transforma el aprendizaje en una aventura épica.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="experiencia" class="scroll-target mb-16 fade-in-section">
+            <h2 class="text-3xl zelda-font text-[#A97142] mb-6 border-b-2 border-[#D1B78A] pb-2">2. La Experiencia Interactiva: "La Leyenda del Dominio"</h2>
+            
+            <article class="mb-12">
+                <h3 class="text-2xl zelda-font text-[#583E23] mb-4">Fundamento: Aprendizaje Experiencial</h3>
+                <p class="text-lg leading-relaxed mb-6">La actividad se basa en el ciclo de aprendizaje de Kolb. No solo lees la teoría, la vives. Interactúa con el diagrama para ver cómo se conectan las fases:</p>
+                <div id="kolb-cycle" class="flex flex-wrap justify-center items-center gap-4 p-6 border-2 border-dashed border-[#D1B78A] rounded-lg">
+                    <div class="kolb-cycle-item text-center w-40">
+                        <div class="kolb-icon text-5xl">🖐️</div>
+                        <h4 class="font-bold">1. Experiencia Concreta</h4>
+                        <p class="kolb-text text-sm text-gray-500 transition-colors">Enfrentar un escenario.</p>
+                    </div>
+                     <div class="text-3xl text-[#A97142] hidden md:block">→</div>
+                    <div class="kolb-cycle-item text-center w-40">
+                        <div class="kolb-icon text-5xl">🤔</div>
+                        <h4 class="font-bold">2. Observación Reflexiva</h4>
+                        <p class="kolb-text text-sm text-gray-500 transition-colors">Ver el resultado de la decisión.</p>
+                    </div>
+                     <div class="text-3xl text-[#A97142] hidden md:block">→</div>
+                    <div class="kolb-cycle-item text-center w-40">
+                        <div class="kolb-icon text-5xl">📜</div>
+                        <h4 class="font-bold">3. Conceptualización Abstracta</h4>
+                        <p class="kolb-text text-sm text-gray-500 transition-colors">Entender el principio detrás.</p>
+                    </div>
+                    <div class="text-3xl text-[#A97142] hidden md:block">→</div>
+                    <div class="kolb-cycle-item text-center w-40">
+                        <div class="kolb-icon text-5xl">⚔️</div>
+                        <h4 class="font-bold">4. Experimentación Activa</h4>
+                        <p class="kolb-text text-sm text-gray-500 transition-colors">Aplicar lo aprendido.</p>
+                    </div>
+                </div>
+            </article>
+
+            <article class="mb-12">
+                <h3 class="text-2xl zelda-font text-[#583E23] mb-4">Arquitectura y Mecánicas de Juego</h3>
+                 <ul class="list-none space-y-4 text-lg">
+                    <li class="flex items-start"><span class="text-2xl mr-3 text-[#A97142]">🪜</span><div><strong class="font-bold">Andamiaje:</strong> Los niveles de dificultad construyen el conocimiento progresivamente.</div></li>
+                    <li class="flex items-start"><span class="text-2xl mr-3 text-[#A97142]">🎭</span><div><strong class="font-bold">Identidad:</strong> La elección de nombre y ávatar crea un vínculo emocional inmediato.</div></li>
+                    <li class="flex items-start"><span class="text-2xl mr-3 text-[#A97142]">💎</span><div><strong class="font-bold">Coleccionismo:</strong> Las reliquias acumulables incentivan la rejugabilidad y el dominio.</div></li>
+                    <li class="flex items-start"><span class="text-2xl mr-3 text-[#A97142]">📜</span><div><strong class="font-bold">Reconocimiento:</strong> El folio único transforma el certificado en un artefacto legendario.</div></li>
+                </ul>
+            </article>
+
+            <article>
+                <h3 class="text-2xl zelda-font text-[#583E23] mb-4">Diseño de Inmersión Sensorial</h3>
+                <p class="mb-4 text-lg">La inmersión se logra a través de detalles sensoriales. ¡Prueba los sonidos de la leyenda!</p>
+                <div class="flex flex-wrap gap-4">
+                    <button class="sound-btn border-2 border-[#A97142] px-4 py-2 rounded-lg transition-colors" data-sound="rupee">Prueba Sonido de Rupia</button>
+                    <button class="sound-btn border-2 border-[#A97142] px-4 py-2 rounded-lg transition-colors" data-sound="secret">Prueba Sonido Secreto</button>
+                    <button class="sound-btn border-2 border-[#A97142] px-4 py-2 rounded-lg transition-colors" data-sound="error">Prueba Sonido de Error</button>
+                </div>
+            </article>
+
+        </section>
+
+        <section id="teoria" class="scroll-target mb-16 fade-in-section">
+            <h2 class="text-3xl zelda-font text-[#A97142] mb-6 border-b-2 border-[#D1B78A] pb-2">3. La Teoría Detrás de la Aventura</h2>
+            <p class="text-lg leading-relaxed mb-8">El juego y la narrativa son vehículos para entregar el contenido del módulo de una forma experiencial, transformando la teoría en acción.</p>
+            <div class="space-y-6">
+                <div class="p-4 border-l-4 border-[#A97142] bg-[#fdf6e3]/60">
+                    <h3 class="font-bold text-xl">Principios de Metodologías Activas</h3>
+                    <p>En lugar de leer sobre ABP o Aula Invertida, te enfrentas a escenarios ("construir un puente") donde debes decidir el siguiente paso lógico. Vives la metodología en acción.</p>
+                </div>
+                <div class="p-4 border-l-4 border-[#A97142] bg-[#fdf6e3]/60">
+                    <h3 class="font-bold text-xl">Relación con la Gamificación</h3>
+                    <p>Las preguntas del nexo legendario ("Insignia + Puente") te orientan a reflexionar sobre cómo los elementos de juego potencian una estrategia pedagógica subyacente.</p>
+                </div>
+                 <div class="p-4 border-l-4 border-[#A97142] bg-[#fdf6e3]/60">
+                    <h3 class="font-bold text-xl">Ciclo de Aprendizaje Gamificado</h3>
+                    <p>Toda la estructura del juego es una metáfora de este ciclo. No lo memorizas, lo recorres. Analizas las mismas fases que estás viviendo en ese preciso momento.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="conclusion" class="scroll-target fade-in-section">
+            <h2 class="text-3xl zelda-font text-[#A97142] mb-4 border-b-2 border-[#D1B78A] pb-2">Conclusión: Un Universo Holístico</h2>
+            <p class="text-lg leading-relaxed">**"Las Crónicas del Guía: El Sendero de la Llama Activa"** fue concebido como un ecosistema de aprendizaje integral. La **narrativa** establece el propósito emocional, el **juego** proporciona la experiencia práctica y la **teoría** se revela como la magia que subyace en la aventura.</p>
+        </section>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const soundManager = {
+                isReady: false,
+                synth: null,
+                init() {
+                    document.body.addEventListener('click', async () => {
+                        if (this.isReady || Tone.context.state === 'running') return;
+                        await Tone.start();
+                        this.synth = new Tone.Synth().toDestination();
+                        this.isReady = true;
+                    }, { once: true });
+                },
+                playRupee() { if (this.isReady) this.synth.triggerAttackRelease("G5", "16n", Tone.now()); },
+                playError() { if (this.isReady) this.synth.triggerAttackRelease("C3", "8n", Tone.now()); },
+                playSecret() {
+                    if (!this.isReady) return;
+                    const now = Tone.now();
+                    this.synth.triggerAttackRelease("G4", "8n", now + 0.01);
+                    this.synth.triggerAttackRelease("A4", "8n", now + 0.2);
+                    this.synth.triggerAttackRelease("B4", "8n", now + 0.4);
+                    this.synth.triggerAttackRelease("C5", "4n", now + 0.6);
+                }
+            };
+
+            soundManager.init();
+
+            document.querySelectorAll('.sound-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const soundType = e.target.dataset.sound;
+                    if (soundType === 'rupee') soundManager.playRupee();
+                    if (soundType === 'secret') soundManager.playSecret();
+                    if (soundType === 'error') soundManager.playError();
+                });
+            });
+
+            const sections = document.querySelectorAll('.fade-in-section');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+        });
+    </script>
+</body>
+</html>
